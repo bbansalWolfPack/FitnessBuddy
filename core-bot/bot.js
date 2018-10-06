@@ -98,6 +98,14 @@ controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], functi
                   service.registerUser(bot, message, response, userIdNameMap[message.user]);
                   break;
 
+                case 'track.calories':
+                    service.trackCalories(bot, message, response, userIdNameMap[message.user]);
+                    break;
+
+                case 'track.exercise':
+                    service.trackExercise(bot, message, response, userIdNameMap[message.user]);
+                    break;
+
                 default:
                     bot.reply(message, response.result.fulfillment.speech);
 
