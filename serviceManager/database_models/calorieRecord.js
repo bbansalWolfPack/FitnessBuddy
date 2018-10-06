@@ -11,7 +11,8 @@ var KeySchema = new Schema({
         index: true
     },
     foodInfo: String,
-    calories: String
+    calories: String,
+    timestamp: Date
 }, {collection: 'CalorieRecords'});
 
 var CalorieRecord = mongoose.model('CalorieRecord', KeySchema);
