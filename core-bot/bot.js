@@ -3,6 +3,7 @@ var apiai = require('apiai');
 var app = apiai(process.env.APIAITOKEN);
 var Slack = require('slack-node')
 var request = require('request')
+var service = require('./service.js')
 var slack = new Slack(process.env.SLACKTOKEN)
 var shortid = require('shortid')
 // variable to store all slack user details
@@ -65,7 +66,6 @@ controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], functi
                    if(userIdNameMap[message.user] == undefined) {
                      getSlackUsers()
                    }
-
                    bot.reply(message, "Hello, " + userIdNameMap[message.user])
                    break;
 
@@ -93,6 +93,10 @@ controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], functi
                     }
                      bot.reply(message, "Good Bye, " + userIdNameMap[message.user])
                     break;
+
+                case 'sign.up':
+                  service.registerUser(bot, message, response, userIdNameMap[message.user]);
+                  break;
 
                 default:
                     bot.reply(message, response.result.fulfillment.speech);

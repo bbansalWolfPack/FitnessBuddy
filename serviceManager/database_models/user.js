@@ -11,9 +11,12 @@ var KeySchema = new Schema({
     index: true
   },
   Name: String,
-  Weight: String,
-  Height: String,
-  age: Number
+  Gender: String,
+  Weight: Number,
+  Height: Number,
+  age: Number,
+  caloriesGoal: Number,
+  activityLevel: Number,
 
 }, {collection: 'Users'});
 
