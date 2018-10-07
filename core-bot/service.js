@@ -2,7 +2,7 @@ var request = require('request');
 var serviceURL  = "http://service:3001";
 
 var registerationService = require('../serviceManager/registeration/registeration.js');
-
+var caloriesTrackingService = require('../serviceManager/calorieTracking/calorieTracking');
 const activityLevelMap = {1: 1.2, 2: 1.375, 3: 1.55, 4: 1.725, 5:1.9};
 module.exports = {
 
@@ -23,7 +23,21 @@ module.exports = {
     calculateCaloriesGoal(params);
 
     registerationService.signUpUser(params, bot, message, response);
-	}
+	},
+
+	trackCalories: function (bot, message, response, userName) {
+        console.log(response.result.parameters);
+        console.log(userName);
+        console.log(message);
+
+        var params = {
+            "UserId": message.user,
+            "FoodInfo": response.result.parameters.FoodInfo,
+            //"calories": response.result.parameters.
+        }
+
+        caloriesTrackingService.recordCalories(params, bot, message, response);
+    }
 }
 
 function calculateCaloriesGoal(params) {
