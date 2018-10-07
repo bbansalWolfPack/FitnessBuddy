@@ -37,7 +37,7 @@ exports.recordCalories = function(params, bot, message, response) {
                 if (err) {
                     bot.reply(message, "Server Error, please try again after some time.")
                 } else {
-                    bot.reply(message, "Successfully tracked your calories.");
+                    bot.reply(message, "You consumed " + food.nf_calories + " calories via " + food.food_name);
                 }
             });
         });
