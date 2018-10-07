@@ -6,13 +6,16 @@ Schema = mongoose.Schema;
 
 var KeySchema = new Schema({
 
-    UserId: {
+    FoodId: {
         type: String,
         index: true
     },
-    foodInfo: String,
-    calories: String,
-    timestamp: Date
+    "userId": String,
+    "food_name": String,
+    "serving_quantity": Number,
+    "serving_unit": String,
+    "calories": Number,
+    "timestamp": String
 }, {collection: 'CalorieRecords'});
 
 var CalorieRecord = mongoose.model('CalorieRecord', KeySchema);
