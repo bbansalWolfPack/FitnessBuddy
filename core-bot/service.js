@@ -36,9 +36,9 @@ module.exports = {
         consultantService.getAllConsultants(bot, message, response);
     },
 
-    hireConsultant(bot, message, consultantName, id, userName) {
+    hireConsultant(bot, message, consultantName, id, daySelected, userName) {
         console.log("***************** creating WEBEX Room for consultant and user*******************");
-        webexService.setupMeeting(bot, message, consultantName, id, userName);
+        webexService.setupMeeting(bot, message, consultantName, id, daySelected, userName);
     },
 
     trackCalories: function(bot, message, response, userName) {

@@ -12,12 +12,13 @@ var transporter = nodemailer.createTransport({
 
 module.exports = {
 
-    sendEmail: function(emailAddress, toMentor, customerName, mentorName, mentorEmail) {
+    sendEmail: function(emailAddress, toMentor, customerName, mentorName, mentorEmail, appointmentDay) {
+        let commonMessage = `Appointment Day: ${appointmentDay} next week`;
         let message;
         if (toMentor) {
-            message = "Hello Mentor, \n" + "\n" + `You have an appointment scheduled with: ${customerName}` + "\n" + "They have been given your email id and will reach out shortly" + "\n" + "Regards" + "\n" + "Team FitnessBuddy"
+            message = "Hello Mentor, \n" + "\n" + `You have an appointment scheduled with: ${customerName}` + "\n" + `${commonMessage}` + "\n" + "They have been given your email id and will reach out shortly" + "\n" + "Regards" + "\n" + "Team FitnessBuddy"
         } else {
-            message = "Hello  \n" + "\n" + `You have scheduled a session with your mentor: ${mentorName}` + "\n\n" + `Email address of your mentor is: ${mentorEmail}` + "Regards" + "\n" + "Team FitnessBuddy"
+            message = "Hello  \n" + "\n" + `You have scheduled a session with your mentor: ${mentorName}` + "\n\n" + `${commonMessage}` + "\n" + `Email address of your mentor is: ${mentorEmail}` +"\n\n" + "Regards" + "\n" + "Team FitnessBuddy"
         }
         var mailOptions = {
             from: 'fitnessBuddyWebexMeetings@gmail.com',

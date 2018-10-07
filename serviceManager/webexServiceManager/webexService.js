@@ -13,7 +13,7 @@ const consultantMap = {
     "Consultant4": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS81ODJkZmM3NC1lZWZmLTRiY2ItYjVmOS1mM2Q0OWRkOTZhNzU"
 };
 
-exports.setupMeeting = function(bot, message, consultantName, id, userName) {
+exports.setupMeeting = function(bot, message, consultantName, id, daySelected, userName) {
     let consultantId = consultantMap[id];
     bot.startConversation(message, function(err, convo) {
         if (err) {
@@ -65,11 +65,11 @@ exports.setupMeeting = function(bot, message, consultantName, id, userName) {
                                                     console.log("Failed to retrive instructor email id from database");
                                                 } else {
                                                     let instructorEmail = result.email;
-                                                    emailService.sendEmail(userEmail, false, userName, consultantName, instructorEmail);
-                                                    emailService.sendEmail(instructorEmail, true, userName, consultantName);
+                                                    emailService.sendEmail(userEmail, false, userName, consultantName, instructorEmail, daySelected);
+                                                    emailService.sendEmail(instructorEmail, true, userName, consultantName, daySelected);
                                                 }
                                             })
-                                            bot.reply(message, "WebEx meeting created with fitness instructor. You will get an email with all the details")
+                                            bot.reply(message, "WebEx meeting created with fitness instructor. You both will get an email with all the details. Thank you")
                                         }
                                     })
                                 }
