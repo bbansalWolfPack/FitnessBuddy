@@ -11,6 +11,10 @@ var slackUsersList =[]
 var url = "https://api.api.ai/v1/"
 var userIdNameMap = {}
 
+var emailService = require('../emailService/emailService.js');
+
+var consultantMap = {"Consultant1": "George", "Consultant2": "Bruce", "Consultant3": "Darcy", "Consultant4": "Stella"};
+
 var userIdEmailMap = {}
 function getSlackUsers() {
 
@@ -26,7 +30,7 @@ function getSlackUsers() {
 }
 
 
-var possibleFunctions = "Here is what I can do for you: \n 1. `Sign up` : Sign up as a new user\n 2. `Track Calories` : Enter your food intake and we will take care of the calories intake for you\n 3. `Track Exercise` : Enter your daily exercise activity and we will track your calories burned\n 4. `Show Progress`: Choose to see your daily achievements and reports. \n 5. `Hire a consultant` : Choose to see the list of instructors available and enroll in their fitness program\n 6. `exit` : exit the conversation\n"
+var possibleFunctions = "Here is what I can do for you: \n 1. `Sign up` : Sign up as a new user\n 2. `Track Calories` : Enter your food intake and we will take care of the calories intake for you\n 3. `Track Exercise` : Enter your daily exercise activity and we will track your calories burned\n 4. `Show Progress`: Choose to see your daily achievements and reports. \n 5. `Show Available Consultants`: Choose to see available consultants who can help achieve your fitness goals. \n 6. `Hire a consultant` : Choose the consultant from the available list using their id and enroll in their respective fitness program\n 7. `exit` : exit the conversation\n"
 
 var controller = Botkit.slackbot({
     debug: false
@@ -96,6 +100,35 @@ controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], functi
 
                 case 'sign.up':
                   service.registerUser(bot, message, response, userIdNameMap[message.user]);
+                  break;
+
+                case 'show.consultants':
+                  service.showConsultants(bot, message, response);
+                  break;
+
+                case 'hire.consultant':
+
+                  let name = consultantMap[response.result.parameters.consultantId];
+                  let id = response.result.parameters.consultantId;
+                  if (name) {
+                    bot.startConversation(message, function(err, convo) {
+                      if (err) {
+                        console.log("Error");
+                        bot.reply(message, "Error processing request, please try again");
+                      } else {
+                        convo.ask(`Are you sure you want to hire ${name}. Type Yes/No`, function(response, convo) {
+                          if (response.text === 'Yes' || response.text === 'yes') {
+                            service.hireConsultant(bot, message, name, id, userIdNameMap[message.user]);
+                          } else {
+                            bot.reply(message, "Feel free to come back and hire one of our awesome experts");
+                          }
+                          convo.next();
+                        });
+                      }
+                    })
+                  } else {
+                    bot.reply(message, "Seems like you provided invalid consultant ID");
+                  }
                   break;
 
                 default:

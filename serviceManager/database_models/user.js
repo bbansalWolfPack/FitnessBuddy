@@ -17,6 +17,8 @@ var KeySchema = new Schema({
   age: Number,
   caloriesGoal: Number,
   activityLevel: Number,
+  webexId: String,
+  email: String,
 
 }, {collection: 'Users'});
 

@@ -2,6 +2,7 @@
 require('../database_models/user.js');
 var mongoose = require('mongoose');
 var nock = require("nock")
+var needle = require('needle');
 
 var User = mongoose.model('User');
 
@@ -10,14 +11,52 @@ exports.signUpUser = function (params, bot, message, response) {
     var userId = params.UserId;
     console.log("post_keys : POST Request ")
     console.log(userId);
-    User.findOneAndUpdate({"UserId": params.UserId, "Name": params.Name}, params, {
-        upsert: true,
-        new: true
-    }, function (err, User) {
-        if (err) {
-          bot.reply(message, "Server Error, please try again after some time")
-        } else {
-          bot.reply(message, "Registeration Succesfull");
-        }
+    bot.startConversation(message, function(err, convo) {
+      if (err) {
+        bot.reply("Internal Server Error, try again after some time");
+      } else {
+        convo.say("Please wait a moment, signing you up!");
+        client.createWebExPerson(params.email, params.Name, function(err, resp, body) {
+          if (err) {
+            console.log(err);
+            console.log("Failed to sign up new user");
+            bot.reply(message, "Server Error, or you are already an existing user");
+          }
+
+          if(!err && resp.statusCode === 200) {
+            var webexId = resp.body.id;
+            params.webexId = webexId;
+
+            User.create(params, function(err, User) {
+              if (err) {
+                console.log("Failed to write on database");
+                bot.reply(message, "Internal server error");
+              } else {
+                let reply = `Registeration Succesfull. According to my calculations, your daily calories intake shall be: ${params.caloriesGoal} Kcal`;
+                bot.reply(message, reply);
+              }
+            })
+          }
+        })
+      }
+      convo.next();
     });
   };
+
+
+  var headers = {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Authorization': 'Bearer NDJlNjVhNzQtMTgyMS00YTc2LWIzMzQtOGJhNzA0MjE2YTFlMzczYzQzODItODQ5'
+  };
+
+  var client = {
+    createWebExPerson: function (email, displayName, onResponse) {
+      var data = {
+        "emails" : [email],
+        "displayName": displayName
+      };
+
+      console.log("Creating webex person");
+      needle.post("https://api.ciscospark.com/v1/people", data, {headers: headers, json:true}, onResponse);
+    }
+  }
