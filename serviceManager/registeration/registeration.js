@@ -8,6 +8,8 @@ var User = mongoose.model('User');
 exports.signUpUser = function(params, bot, message, response) {
 
     var userId = params.UserId;
+    let userEmail = params.email;
+    let username = params.Name;
     console.log("post_keys : POST Request ")
     console.log(userId);
     bot.startConversation(message, function(err, convo) {
@@ -15,14 +17,14 @@ exports.signUpUser = function(params, bot, message, response) {
             bot.reply("Internal Server Error, try again after some time");
         } else {
             convo.say("Please wait a moment, signing you up!");
-            client.createWebExPerson(params.email, params.Name, function(err, resp, body) {
+            client.createWebExPerson(userEmail, username, function(err, resp, body) {
                 if (err) {
                     console.log(err);
                     console.log("Failed to sign up new user");
                     bot.reply(message, "Server Error, or you are already an existing user");
                 }
 
-				console.log(resp.body)
+				     console.log(resp.body)
                 if (!err && resp.statusCode === 200) {
                     var webexId = resp.body.id;
                     params.webexId = webexId;
@@ -56,7 +58,9 @@ var client = {
             "displayName": displayName
         };
 
+
         console.log("Creating webex person");
+        console.log(data);
         needle.post("https://api.ciscospark.com/v1/people", data, {
             headers: headers,
             json: true

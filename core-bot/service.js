@@ -29,6 +29,7 @@ module.exports = {
             "Age": response.result.parameters.Age,
             "Gender": response.result.parameters.Gender,
             "activityLevel": response.result.parameters.ActivityLevel,
+            "email": response.result.parameters.email
         };
 
         calculateCaloriesGoal(params);
