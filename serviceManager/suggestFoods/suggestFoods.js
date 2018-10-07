@@ -33,33 +33,22 @@ function getSuggestionsOnMap(params, bot, message) {
     var d = new Date(0);
     d.setUTCSeconds(message.ts - 4 * 60 * 60);
 
-    CalorieRecord.aggregate([{
-        $match: {
-            userId: {
-                $eq: params.User.UserId
-            },
-            timestamp: {
-                $eq: d.toISOString().substring(0, 10)
-            }
-        }
-    }, {
-        $group: {
-            _id: '$calories',
-            total: {
-                $sum: '$calories'
-            }
-        }
-    }], function(err, result) {
-        if (err) {
-            console.log('SuggestFoods: DB error.');
+    let totalCaloriesConsumed = 0;
+
+    CalorieRecord.find({
+        "userId": params.User.UserId,
+        "timestamp": d.toISOString().substring(0, 10)
+    }, function(err, result) {
+        result.forEach((calorieRecord) => {
+            console.log(calorieRecord.calories);
+            totalCaloriesConsumed = totalCaloriesConsumed + calorieRecord.calories;
+        });
+        bot.reply(message, `You have consumed ${totalCaloriesConsumed} kCal today.`);
+        if (totalCaloriesConsumed > params.User.caloriesGoal) {
+            bot.reply(message, "Hmmm.. You have already crossed you daily kCal intake limit of " + params.User.caloriesGoal + " kCal.");
         } else {
-            bot.reply(message, "You have consumed " + result.total + " kCal today.");
-            if (result.total > params.User.caloriesGoal) {
-                bot.reply(message, "Hmmm.. You have already crossed you daily kCal intake limit of " + params.User.caloriesGoal + " kCal.");
-            } else {
-                bot.reply(message, "Hmmm.. You have a calorie intake deficit of " + (params.User.caloriesGoal - result.total) + " kCal for today.");
-                getFoodSuggestionsOnMap(bot, message, params.ZipCode, (params.User.caloriesGoal - result.total));
-            }
+            bot.reply(message, "Hmmm.. You have a calorie intake deficit of " + (params.User.caloriesGoal - totalCaloriesConsumed) + " kCal for today.");
+            getFoodSuggestionsOnMap(bot, message, params.ZipCode, (params.User.caloriesGoal - totalCaloriesConsumed));
         }
     });
 }
@@ -81,7 +70,9 @@ function getFoodSuggestionsOnMap(bot, message, zipcode, deficit) {
             longitude = resp.body.lng;
             location = resp.body.city + ", " + resp.body.state
             bot.reply(message, "Looking for healthy food options in 2 mile radius of " + location);
-            needle.get("https://trackapi.nutritionix.com/v2/locations?ll=" + latitude + "," + longitude + "&distance=2mi", function(err, resp, body) {
+            needle.get("https://trackapi.nutritionix.com/v2/locations?ll=" + latitude + "," + longitude + "&distance=2mi", {
+                headers: headers
+            }, function(err, resp, body) {
                 if (err) {
                     console.log('SuggestFoods: API error.');
                 } else {
@@ -119,8 +110,28 @@ function getFoodSuggestionsOnMap(bot, message, zipcode, deficit) {
                                         return 0;
                                     }
                                 });
+                                foods = foods.slice(0, 3);
                                 foods.forEach((food) => {
                                     console.log(food);
+                                    bot.reply(message, {
+                                        username: 'fitness-buddy',
+                                        text: 'https://www.google.com/maps/@' + location.lat + ',' + location.lng + ',17z',
+                                        attachments: [{
+                                            "fallback": food.food_name,
+                                            "color": "#7CD197",
+                                            "author_name": food.brand_name,
+                                            "author_link": location.website,
+                                            "title": food.food_name,
+                                            "text": "Serving Unit - " + food.serving_unit,
+                                            "fields": [{
+                                                "title": "KCalories",
+                                                "value": food.nf_calories
+                                            }],
+                                            "thumb_url": food.photo.thumb,
+                                            "footer": "Suggestion by fitness-buddy",
+                                            "ts": message.ts
+                                        }]
+                                    });
                                 });
                             }
                         });
