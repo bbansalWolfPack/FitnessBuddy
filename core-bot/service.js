@@ -12,7 +12,6 @@ var consultantService = require('../serviceManager/consultantServiceManager/cons
 var webexService = require('../serviceManager/webexServiceManager/webexService.js');
 
 module.exports = {
-
     registerUser: function(bot, message, response, userName) {
         console.log("*************Signing up user******************");
         console.log(response.result.parameters);
@@ -32,17 +31,17 @@ module.exports = {
         registerationService.signUpUser(params, bot, message, response);
     },
 
-		showConsultants(bot, message, response) {
-			console.log("****************** fetching all available consultants***************");
-			consultantService.getAllConsultants(bot, message, response);
-		},
+    showConsultants(bot, message, response) {
+        console.log("****************** fetching all available consultants***************");
+        consultantService.getAllConsultants(bot, message, response);
+    },
 
-		hireConsultant(bot, message, consultantName, id, userName) {
-			console.log("***************** creating WEBEX Room for consultant and user*******************");
-			webexService.setupMeeting(bot, message, consultantName, id, userName);
-		},
+    hireConsultant(bot, message, consultantName, id, userName) {
+        console.log("***************** creating WEBEX Room for consultant and user*******************");
+        webexService.setupMeeting(bot, message, consultantName, id, userName);
+    },
 
-    trackCalories: function (bot, message, response, userName) {
+    trackCalories: function(bot, message, response, userName) {
         console.log(response.result.parameters);
         console.log(userName);
         console.log(message);

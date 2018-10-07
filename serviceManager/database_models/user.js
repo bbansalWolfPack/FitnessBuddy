@@ -6,20 +6,22 @@ Schema = mongoose.Schema;
 
 var KeySchema = new Schema({
 
-  UserId: {
-    type: String,
-    index: true
-  },
-  Name: String,
-  Gender: String,
-  Weight: Number,
-  Height: Number,
-  age: Number,
-  caloriesGoal: Number,
-  activityLevel: Number,
-  webexId: String,
-  email: String,
+    UserId: {
+        type: String,
+        index: true
+    },
+    Name: String,
+    Gender: String,
+    Weight: Number,
+    Height: Number,
+    age: Number,
+    caloriesGoal: Number,
+    activityLevel: Number,
+    webexId: String,
+    email: String,
 
-}, {collection: 'Users'});
+}, {
+    collection: 'Users'
+});
 
 var User = mongoose.model('User', KeySchema);

@@ -13,7 +13,12 @@ var userIdNameMap = {}
 
 var emailService = require('../emailService/emailService.js');
 
-var consultantMap = {"Consultant1": "George", "Consultant2": "Bruce", "Consultant3": "Darcy", "Consultant4": "Stella"};
+var consultantMap = {
+    "Consultant1": "George",
+    "Consultant2": "Bruce",
+    "Consultant3": "Darcy",
+    "Consultant4": "Stella"
+};
 
 var userIdEmailMap = {}
 
@@ -112,33 +117,32 @@ controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], functi
                     break;
 
                 case 'show.consultants':
-                  service.showConsultants(bot, message, response);
-                  break;
+                    service.showConsultants(bot, message, response);
+                    break;
 
                 case 'hire.consultant':
-
-                  let name = consultantMap[response.result.parameters.consultantId];
-                  let id = response.result.parameters.consultantId;
-                  if (name) {
-                    bot.startConversation(message, function(err, convo) {
-                      if (err) {
-                        console.log("Error");
-                        bot.reply(message, "Error processing request, please try again");
-                      } else {
-                        convo.ask(`Are you sure you want to hire ${name}. Type Yes/No`, function(response, convo) {
-                          if (response.text === 'Yes' || response.text === 'yes') {
-                            service.hireConsultant(bot, message, name, id, userIdNameMap[message.user]);
-                          } else {
-                            bot.reply(message, "Feel free to come back and hire one of our awesome experts");
-                          }
-                          convo.next();
-                        });
-                      }
-                    })
-                  } else {
-                    bot.reply(message, "Seems like you provided invalid consultant ID");
-                  }
-                  break;
+                    let name = consultantMap[response.result.parameters.consultantId];
+                    let id = response.result.parameters.consultantId;
+                    if (name) {
+                        bot.startConversation(message, function(err, convo) {
+                            if (err) {
+                                console.log("Error");
+                                bot.reply(message, "Error processing request, please try again");
+                            } else {
+                                convo.ask(`Are you sure you want to hire ${name}. Type Yes/No`, function(response, convo) {
+                                    if (response.text === 'Yes' || response.text === 'yes') {
+                                        service.hireConsultant(bot, message, name, id, userIdNameMap[message.user]);
+                                    } else {
+                                        bot.reply(message, "Feel free to come back and hire one of our awesome experts");
+                                    }
+                                    convo.next();
+                                });
+                            }
+                        })
+                    } else {
+                        bot.reply(message, "Seems like you provided invalid consultant ID");
+                    }
+                    break;
 
                 default:
                     bot.reply(message, response.result.fulfillment.speech);

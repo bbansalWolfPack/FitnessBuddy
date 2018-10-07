@@ -11,27 +11,27 @@ var mongoose = require('mongoose');
 mongoose.connect(mongoDBUri);
 var db = mongoose.connection;
 
-db.on('open', function () {
+db.on('open', function() {
 
-	console.log("connected to Fitness Buddy Database");
+    console.log("connected to Fitness Buddy Database");
 
 });
 
-db.on('error', function () {
-  console.log('unable to connect to database at ' + mongoDBUri + " trying again in 5s...");
-  setTimeout(function() {
-  	connectDB();
-  }, 5000);
+db.on('error', function() {
+    console.log('unable to connect to database at ' + mongoDBUri + " trying again in 5s...");
+    setTimeout(function() {
+        connectDB();
+    }, 5000);
 });
 
 function connectDB() {
-	try {
-	  mongoose.connect(mongoDBUri);
-	  db = mongoose.connection;
-	  console.log("Started connection on " + mongoDBUri + ", waiting for it to open...");
-	} catch (err) {
-	  console.log("Setting up failed to connect to " + mongoDBUri, err.message);
-	}
+    try {
+        mongoose.connect(mongoDBUri);
+        db = mongoose.connection;
+        console.log("Started connection on " + mongoDBUri + ", waiting for it to open...");
+    } catch (err) {
+        console.log("Setting up failed to connect to " + mongoDBUri, err.message);
+    }
 }
 
 exports.connection = mongoose
