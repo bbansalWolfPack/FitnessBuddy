@@ -6,13 +6,20 @@ Schema = mongoose.Schema;
 
 var KeySchema = new Schema({
 
-    UserId: {
+    ExerciseId: {
         type: String,
         index: true
     },
-    exerciseInfo: String,
-    calories: String,
-    timestamp: Date
-}, {collection: 'ExerciseRecords'});
+    UserId: String,
+    ExerciseInfo: String,
+    Calories: Number,
+    Timestamp: String,
+    ActivityName: String,
+    ActivityDuration: Number,
+    Met: Number
+}, {
+    collection: 'ExerciseRecords',
+    autoIndex: true,
+});
 
 var ExerciseRecord = mongoose.model('ExerciseRecord', KeySchema);
