@@ -111,6 +111,10 @@ controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], functi
                     service.trackExercise(bot, message, response, userIdNameMap[message.user]);
                     break;
 
+                case 'suggest.foods':
+                    service.suggestFoods(bot, message, response, userIdNameMap[message.user]);
+                    break;
+
                 case 'show.consultants':
                   service.showConsultants(bot, message, response);
                   break;

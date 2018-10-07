@@ -86,7 +86,7 @@ exports.setupMeeting = function(bot, message, consultantName, id, daySelected, u
 
 var headers = {
     'Content-Type': 'application/json; charset=utf-8',
-    'Authorization': 'Bearer NDJlNjVhNzQtMTgyMS00YTc2LWIzMzQtOGJhNzA0MjE2YTFlMzczYzQzODItODQ5'
+    'Authorization': 'Bearer ODlhMmYxNmYtNWVkYy00NWRkLWE3ODktMjFlYzc1MTc1MzRhMWVhZTc4NGEtNTMy'
 };
 
 var client = {

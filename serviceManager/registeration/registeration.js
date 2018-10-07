@@ -22,6 +22,7 @@ exports.signUpUser = function(params, bot, message, response) {
                     bot.reply(message, "Server Error, or you are already an existing user");
                 }
 
+				console.log(resp.body)
                 if (!err && resp.statusCode === 200) {
                     var webexId = resp.body.id;
                     params.webexId = webexId;
@@ -45,7 +46,7 @@ exports.signUpUser = function(params, bot, message, response) {
 
 var headers = {
     'Content-Type': 'application/json; charset=utf-8',
-    'Authorization': 'Bearer NDJlNjVhNzQtMTgyMS00YTc2LWIzMzQtOGJhNzA0MjE2YTFlMzczYzQzODItODQ5'
+    'Authorization': 'Bearer ODlhMmYxNmYtNWVkYy00NWRkLWE3ODktMjFlYzc1MTc1MzRhMWVhZTc4NGEtNTMy'
 };
 
 var client = {
