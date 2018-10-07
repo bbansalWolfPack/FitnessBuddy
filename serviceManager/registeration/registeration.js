@@ -1,4 +1,3 @@
-
 require('../database_models/user.js');
 var mongoose = require('mongoose');
 var nock = require("nock")
@@ -6,7 +5,7 @@ var needle = require('needle');
 
 var User = mongoose.model('User');
 
-exports.signUpUser = function (params, bot, message, response) {
+exports.signUpUser = function(params, bot, message, response) {
 
     var userId = params.UserId;
     console.log("post_keys : POST Request ")

@@ -7,7 +7,7 @@ var service = require('./service.js')
 var slack = new Slack(process.env.SLACKTOKEN)
 var shortid = require('shortid')
 // variable to store all slack user details
-var slackUsersList =[]
+var slackUsersList = []
 var url = "https://api.api.ai/v1/"
 var userIdNameMap = {}
 
@@ -16,17 +16,18 @@ var emailService = require('../emailService/emailService.js');
 var consultantMap = {"Consultant1": "George", "Consultant2": "Bruce", "Consultant3": "Darcy", "Consultant4": "Stella"};
 
 var userIdEmailMap = {}
+
 function getSlackUsers() {
 
-  slack.api("users.list", function(error, response) {
-    slackUsersList = response.members;
+    slack.api("users.list", function(error, response) {
+        slackUsersList = response.members;
 
-  });
-  for(var i = 0 ; i < slackUsersList.length; i++) {
-    var user = slackUsersList[i];
-    userIdNameMap[user.id] = user.real_name
-    userIdEmailMap[user.id] = user.profile.email
-  }
+    });
+    for (var i = 0; i < slackUsersList.length; i++) {
+        var user = slackUsersList[i];
+        userIdNameMap[user.id] = user.real_name
+        userIdEmailMap[user.id] = user.profile.email
+    }
 }
 
 
@@ -45,21 +46,21 @@ controller.spawn({
 var sessionMap = {}
 getSlackUsers()
 
-controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], function (bot, message) {
-      if (sessionMap[message.user] == undefined) {
-      sessionMap[message.user] = message.user;
+controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], function(bot, message) {
+    if (sessionMap[message.user] == undefined) {
+        sessionMap[message.user] = message.user;
     }
 
-      if(message.text.indexOf("<") > 1) {
+    if (message.text.indexOf("<") > 1) {
         console.log("Initial:" + message.text)
-        message.text = message.text.substring(0,message.text.indexOf("<"));
-      }
+        message.text = message.text.substring(0, message.text.indexOf("<"));
+    }
 
-      var request = app.textRequest(message.text, {
-      sessionId: sessionMap[message.user]
+    var request = app.textRequest(message.text, {
+        sessionId: sessionMap[message.user]
     });
 
-    request.on('response', function (response) {
+    request.on('response', function(response) {
         // console.log(response);
         if (response.result.actionIncomplete) {
             bot.reply(message, response.result.fulfillment.speech);
@@ -67,11 +68,11 @@ controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], functi
             switch (response.result.action) {
 
                 case 'user.initiation':
-                   if(userIdNameMap[message.user] == undefined) {
-                     getSlackUsers()
-                   }
-                   bot.reply(message, "Hello, " + userIdNameMap[message.user])
-                   break;
+                    if (userIdNameMap[message.user] == undefined) {
+                        getSlackUsers()
+                    }
+                    bot.reply(message, "Hello, " + userIdNameMap[message.user])
+                    break;
 
                 case 'greeting.initial':
                     bot.reply(message, response.result.fulfillment.speech);
@@ -92,15 +93,23 @@ controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], functi
                     break;
 
                 case 'conversation.end':
-                    if(userIdNameMap[message.user] == undefined) {
+                    if (userIdNameMap[message.user] == undefined) {
                         getSlackUsers()
                     }
-                     bot.reply(message, "Good Bye, " + userIdNameMap[message.user])
+                    bot.reply(message, "Good Bye, " + userIdNameMap[message.user])
                     break;
 
                 case 'sign.up':
-                  service.registerUser(bot, message, response, userIdNameMap[message.user]);
-                  break;
+                    service.registerUser(bot, message, response, userIdNameMap[message.user]);
+                    break;
+
+                case 'track.calories':
+                    service.trackCalories(bot, message, response, userIdNameMap[message.user]);
+                    break;
+
+                case 'track.exercise':
+                    service.trackExercise(bot, message, response, userIdNameMap[message.user]);
+                    break;
 
                 case 'show.consultants':
                   service.showConsultants(bot, message, response);
@@ -138,7 +147,7 @@ controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], functi
         }
     });
 
-    request.on('error', function (error) {
+    request.on('error', function(error) {
         console.log(error);
     });
 
@@ -146,32 +155,30 @@ controller.hears('(.*)', ['mention', 'direct_mention', 'direct_message'], functi
 });
 
 
-function deleteContextsForUser(sessionId)
-{
+function deleteContextsForUser(sessionId) {
 
-	var options = {
-		url: url + "contexts/?sessionId=" + sessionId,
-		method: 'DELETE',
-		headers: {
-			"User-Agent": "EnableIssues",
-			"content-type": "application/json",
-			"Authorization": "Bearer" + process.env.APIAITOKEN
-		}
-	};
+    var options = {
+        url: url + "contexts/?sessionId=" + sessionId,
+        method: 'DELETE',
+        headers: {
+            "User-Agent": "EnableIssues",
+            "content-type": "application/json",
+            "Authorization": "Bearer" + process.env.APIAITOKEN
+        }
+    };
 
-	// Send a http request to url and specify a callback that will be called upon its return.
-	request(options, function (error, response, body)
-	{
-    console.log("context cleared");
-	});
+    // Send a http request to url and specify a callback that will be called upon its return.
+    request(options, function(error, response, body) {
+        console.log("context cleared");
+    });
 
 }
 
 
 function validateOTP(number, otp, callback) {
-  if(otp == number) {
-    callback(true);
-  } else{
-    callback(false);
-  }
+    if (otp == number) {
+        callback(true);
+    } else {
+        callback(false);
+    }
 }
