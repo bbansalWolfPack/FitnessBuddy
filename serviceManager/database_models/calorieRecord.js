@@ -11,7 +11,7 @@ var KeySchema = new Schema({
         index: true
     },
     foodInfo: String,
-    calories: String,
+    calories: Number,
     timestamp: Date
 }, {collection: 'CalorieRecords'});
 
