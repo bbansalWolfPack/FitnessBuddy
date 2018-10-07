@@ -4,12 +4,17 @@ var serviceURL = "http://service:3001";
 var registerationService = require('../serviceManager/registeration/registeration.js');
 var caloriesTrackingService = require('../serviceManager/calorieTracking/calorieTracking');
 var trackExerciseService = require('../serviceManager/exerciseTracking/exerciseTracking.js');
-
-
+var suggestFoodsService = require('../serviceManager/suggestFoods/suggestFoods.js');
 var consultantService = require('../serviceManager/consultantServiceManager/consultantService.js');
-
-
 var webexService = require('../serviceManager/webexServiceManager/webexService.js');
+
+const activityLevelMap = {
+    1: 1.2,
+    2: 1.375,
+    3: 1.55,
+    4: 1.725,
+    5: 1.9
+};
 
 module.exports = {
     registerUser: function(bot, message, response, userName) {
@@ -56,7 +61,6 @@ module.exports = {
 
     trackExercise: function(bot, message, response, userName) {
         console.log("****************Track Exercise*******************");
-        console.log(response.result.parameters);
 
         var params = {
             "UserId": message.user,
@@ -64,6 +68,17 @@ module.exports = {
         };
 
         trackExerciseService.addActivity(params, bot, message);
+    },
+
+    suggestFoods: function(bot, message, response, userName) {
+        console.log("************Food Suggestions*********************");
+
+        console.log('SuggestFoods: Finding the user details');
+        var params = {
+            "User": message.user,
+            "ZipCode": response.result.parameters.zipCode
+        }
+        suggestFoodsService.getSuggestions(params, bot, message);
     }
 }
 
