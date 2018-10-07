@@ -2,6 +2,7 @@ var request = require('request');
 var serviceURL = "http://service:3001";
 
 var registerationService = require('../serviceManager/registeration/registeration.js');
+var caloriesTrackingService = require('../serviceManager/calorieTracking/calorieTracking');
 var trackExerciseService = require('../serviceManager/exerciseTracking/exerciseTracking.js');
 
 const activityLevelMap = {
@@ -30,6 +31,19 @@ module.exports = {
         calculateCaloriesGoal(params);
 
         registerationService.signUpUser(params, bot, message, response);
+    },
+
+    trackCalories: function (bot, message, response, userName) {
+        console.log(response.result.parameters);
+        console.log(userName);
+        console.log(message);
+
+        var params = {
+            "UserId": message.user,
+            "FoodInfo": response.result.parameters.FoodInfo,
+        }
+
+        caloriesTrackingService.recordCalories(params, bot, message, response);
     },
 
     trackExercise: function(bot, message, response, userName) {
